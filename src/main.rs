@@ -2,9 +2,12 @@ use rand::Rng;
 use std::io;
 use std::io::Write; // <--- bring flush() into scope
 use std::mem;
+use std::thread;
+use std::time;
 use colored_text::Colorize;
 const BOARDSIZE: usize = 5;
 const GENERATIONS: i32 = 250;
+const WAITBTWNGENS: time::Duration = time::Duration::from_millis(100); 
 
 #[derive(Debug, Clone)]
 struct Cel {
@@ -42,8 +45,9 @@ fn draw_board(board: &Vec<Vec<Cel>>){
         for col in row.into_iter(){
             draw_cel(&col);
         }
-        print!("{}", "\n")
+        print!("{}", "\n");
     }
+    print!("{}", "\n");
     io::stdout().flush().unwrap();
 }
 
@@ -79,6 +83,7 @@ fn main() {
         iterate_board(&current_board, &mut next_board);
         draw_board(&next_board);
         mem::swap(&mut current_board, &mut next_board);
+        thread::sleep(WAITBTWNGENS);
     }
     
 }

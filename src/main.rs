@@ -53,6 +53,16 @@ fn draw_board(board: &Vec<Vec<Cel>>){
 
 fn count_neighbours(row_idx: usize, col_idx: usize, current_board: &Vec<Vec<Cel>>) -> (u8, u8, u8) {
     return (2,2,2)
+    totNb=(0,0,0);
+    for row in 0..current_board.len(){
+        for col in 0..current_board.len(){
+            if row > 0 { 
+                if current_board[row-1][col].red{totNb[0] += 1;}
+                if current_board[row-1][col].green{totNb[1] += 1;}
+                if current_board[row-1][col].blue{totNb[2] += 1;}    
+            }
+        }
+    }
 }
 
 fn iterate_cel(nb: u8) -> bool{

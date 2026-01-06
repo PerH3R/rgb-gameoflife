@@ -8,7 +8,8 @@ use colored_text::Colorize;
 const BOARDSIZE: usize = 50;
 const GENERATIONS: i32 = 500;
 const WAITBTWNGENS: time::Duration = time::Duration::from_millis(50); 
-const NBMETHOD: i8 = 1; //0=seperate boards per colour, 1= count other clrs in same cell as neigbours
+const NBMETHOD: i8 = 1; //0 = seperate boards per colour, 1 = count other clrs in same cell as neigbours
+const RULE: i8 = 1; // 0 = default, 1 = [spawn = 4; stay alive = 3-5]
 
 #[derive(Debug, Clone)]
 struct Cel {
@@ -83,12 +84,23 @@ fn count_neighbours(row_idx: usize, col_idx: usize, current_board: &Vec<Vec<Cel>
 }
 
 fn iterate_cel(nb: u8, alive: bool) -> bool{
-    if (!alive) && nb == 3 {            // spawn new life on dead cell
-        return true;
+    if RULE == 0 {
+        if (!alive) && nb == 3 {            // spawn new life on dead cell
+            return true;
+        }
+        if alive && (nb == 2 || nb == 3){   // continue life on living cell
+            return true;
+        }
     }
-    if alive && (nb == 2 || nb == 3){   // continue life on living cell
-        return true;
+    if RULE == 1 {
+        if (!alive) && nb == 4 {            // spawn new life on dead cell
+            return true;
+        }
+        if (alive && nb >= 3 && nb <= 4){   // continue life on living cell
+            return true;
+        }
     }
+        
     false
 }
 

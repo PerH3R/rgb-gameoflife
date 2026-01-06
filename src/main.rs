@@ -5,9 +5,10 @@ use std::mem;
 use std::thread;
 use std::time;
 use colored_text::Colorize;
-const BOARDSIZE: usize = 25;
+const BOARDSIZE: usize = 50;
 const GENERATIONS: i32 = 500;
-const WAITBTWNGENS: time::Duration = time::Duration::from_millis(100); 
+const WAITBTWNGENS: time::Duration = time::Duration::from_millis(50); 
+const NBMETHOD: i8 = 1; //0=seperate boards per colour, 1= count other clrs in same cell as neigbours
 
 #[derive(Debug, Clone)]
 struct Cel {
@@ -41,7 +42,8 @@ fn draw_cel(c: &Cel){
 }
 
 fn draw_board(board: &Vec<Vec<Cel>>){
-    print!("{}[2J", 27 as char); // clear terminal screen
+    //print!("{}[2J", 27 as char); // clear terminal screen
+	print!("\x1Bc");
     for row in board.into_iter() {
         for col in row.into_iter(){
             draw_cel(&col);
@@ -69,6 +71,10 @@ fn count_neighbours(row_idx: usize, col_idx: usize, current_board: &Vec<Vec<Cel>
                     if current_board[row_uw][col_uw].red{total_nb.0 += 1;}
                     if current_board[row_uw][col_uw].green{total_nb.1 += 1;}
                     if current_board[row_uw][col_uw].blue{total_nb.2 += 1;}  
+                } if NBMETHOD == 1 {
+                    if current_board[row_uw][col_uw].red{total_nb.0 += current_board[row_uw][col_uw].green as u8 + current_board[row_uw][col_uw].blue as u8;}
+                    if current_board[row_uw][col_uw].green{total_nb.1 += current_board[row_uw][col_uw].red as u8 + current_board[row_uw][col_uw].blue as u8;}
+                    if current_board[row_uw][col_uw].blue{total_nb.2 += current_board[row_uw][col_uw].red as u8 + current_board[row_uw][col_uw].green as u8;}
                 }
             }
         }
